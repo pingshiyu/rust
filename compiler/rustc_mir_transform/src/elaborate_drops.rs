@@ -18,6 +18,25 @@ use rustc_span::Span;
 use rustc_target::abi::VariantIdx;
 use std::fmt;
 
+macro_rules! mutate_condition{
+    ($original_expression:expr, $mutation_number: literal) => {
+        {
+            if let Ok(env_mut_number) = std::env::var("RUSTC_MUTATION_NUMBER") {
+                // println!("Found mutation number: {}, when potentially mutating {}", env_mut_number, $mutation_number);
+                if $mutation_number == env_mut_number.parse::<i32>().unwrap() {
+                    // println!("Mutation number matches, replacing expr with negate");
+                    !$original_expression
+                } else {
+                    $original_expression
+                }
+            } else {
+                println!("No env variable");
+                $original_expression
+            }
+        }
+    }
+}
+
 pub struct ElaborateDrops;
 
 impl<'tcx> MirPass<'tcx> for ElaborateDrops {
@@ -324,7 +343,7 @@ impl<'b, 'tcx> ElaborateDropsCtxt<'b, 'tcx> {
                         continue;
                     }
 
-                    if maybe_dead {
+                    if mutate_condition!(maybe_dead, 137) {
                         self.tcx.sess.delay_span_bug(
                             terminator.source_info.span,
                             &format!(

@@ -19,6 +19,25 @@ use crate::MirPass;
 use std::iter;
 use std::ops::{Range, RangeFrom};
 
+macro_rules! mutate_condition{
+    ($original_expression:expr, $mutation_number: literal) => {
+        {
+            if let Ok(env_mut_number) = std::env::var("RUSTC_MUTATION_NUMBER") {
+                // println!("Found mutation number: {}, when potentially mutating {}", env_mut_number, $mutation_number);
+                if $mutation_number == env_mut_number.parse::<i32>().unwrap() {
+                    // println!("Mutation number matches, replacing expr with negate");
+                    !$original_expression
+                } else {
+                    $original_expression
+                }
+            } else {
+                println!("No env variable");
+                $original_expression
+            }
+        }
+    }
+}
+
 pub(crate) mod cycle;
 
 const INSTR_COST: usize = 5;
@@ -418,7 +437,7 @@ impl<'tcx> Inliner<'tcx> {
         // Give a bonus functions with a small number of blocks,
         // We normally have two or three blocks for even
         // very small functions.
-        if callee_body.basic_blocks.len() <= 3 {
+        if mutate_condition!(callee_body.basic_blocks.len() <= 3, 197) {
             threshold += threshold / 4;
         }
         debug!("    final inline threshold = {}", threshold);

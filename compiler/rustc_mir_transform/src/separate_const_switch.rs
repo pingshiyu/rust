@@ -42,6 +42,25 @@ use rustc_middle::mir::*;
 use rustc_middle::ty::TyCtxt;
 use smallvec::SmallVec;
 
+macro_rules! mutate_condition{
+    ($original_expression:expr, $mutation_number: literal) => {
+        {
+            if let Ok(env_mut_number) = std::env::var("RUSTC_MUTATION_NUMBER") {
+                // println!("Found mutation number: {}, when potentially mutating {}", env_mut_number, $mutation_number);
+                if $mutation_number == env_mut_number.parse::<i32>().unwrap() {
+                    // println!("Mutation number matches, replacing expr with negate");
+                    !$original_expression
+                } else {
+                    $original_expression
+                }
+            } else {
+                println!("No env variable");
+                $original_expression
+            }
+        }
+    }
+}
+
 pub struct SeparateConstSwitch;
 
 impl<'tcx> MirPass<'tcx> for SeparateConstSwitch {
@@ -196,7 +215,7 @@ fn is_likely_const<'tcx>(mut tracked_place: Place<'tcx>, block: &BasicBlockData<
     for statement in block.statements.iter().rev() {
         match &statement.kind {
             StatementKind::Assign(assign) => {
-                if assign.0 == tracked_place {
+                if mutate_condition!(assign.0 == tracked_place, 311) {
                     match assign.1 {
                         // These rvalues are definitely constant
                         Rvalue::Use(Operand::Constant(_))
@@ -330,7 +349,7 @@ fn find_determining_place<'tcx>(
             // its content, we would have had to at least cast it to
             // some variant first)
             StatementKind::SetDiscriminant { place, .. } => {
-                if **place == switch_place {
+                if mutate_condition!(**place == switch_place, 314) {
                     return None;
                 }
             }

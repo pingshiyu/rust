@@ -8,6 +8,25 @@ use rustc_data_structures::fx::{FxHashMap, FxHashSet};
 use rustc_middle::mir::*;
 use rustc_middle::ty::TyCtxt;
 
+macro_rules! mutate_condition{
+    ($original_expression:expr, $mutation_number: literal) => {
+        {
+            if let Ok(env_mut_number) = std::env::var("RUSTC_MUTATION_NUMBER") {
+                // println!("Found mutation number: {}, when potentially mutating {}", env_mut_number, $mutation_number);
+                if $mutation_number == env_mut_number.parse::<i32>().unwrap() {
+                    // println!("Mutation number matches, replacing expr with negate");
+                    !$original_expression
+                } else {
+                    $original_expression
+                }
+            } else {
+                println!("No env variable");
+                $original_expression
+            }
+        }
+    }
+}
+
 pub struct UnreachablePropagation;
 
 impl MirPass<'_> for UnreachablePropagation {
@@ -29,7 +48,7 @@ impl MirPass<'_> for UnreachablePropagation {
                 let terminator_kind_opt = remove_successors(&terminator.kind, is_unreachable);
 
                 if let Some(terminator_kind) = terminator_kind_opt {
-                    if terminator_kind == TerminatorKind::Unreachable {
+                    if mutate_condition!(terminator_kind == TerminatorKind::Unreachable, 375) {
                         unreachable_blocks.insert(bb);
                     }
                     replacements.insert(bb, terminator_kind);
