@@ -20,11 +20,9 @@ fn main() -> () {
             let mut _15: &std::vec::Vec<u8>; // in scope 4 at $SRC_DIR/alloc/src/string.rs:LL:COL
             let _16: &std::vec::Vec<u8>; // in scope 4 at $SRC_DIR/alloc/src/string.rs:LL:COL
             scope 5 {
-                scope 6 (inlined <Vec<u8> as Deref>::deref) { // at $SRC_DIR/alloc/src/string.rs:LL:COL
-                    debug self => _15;   // in scope 6 at $SRC_DIR/alloc/src/vec/mod.rs:LL:COL
-                    let mut _17: *const u8; // in scope 6 at $SRC_DIR/alloc/src/vec/mod.rs:LL:COL
-                    let mut _18: &std::vec::Vec<u8>; // in scope 6 at $SRC_DIR/alloc/src/vec/mod.rs:LL:COL
-                    let mut _19: usize;  // in scope 6 at $SRC_DIR/alloc/src/vec/mod.rs:LL:COL
+                scope 6 (inlined from_utf8_unchecked) { // at $SRC_DIR/alloc/src/string.rs:LL:COL
+                    debug v => _13;      // in scope 6 at $SRC_DIR/core/src/str/converts.rs:LL:COL
+                    let mut _17: &[u8];  // in scope 6 at $SRC_DIR/core/src/str/converts.rs:LL:COL
                     scope 7 {
                     }
                 }
@@ -32,7 +30,7 @@ fn main() -> () {
         }
         scope 8 (inlined core::str::<impl str>::parse::<bool>) { // at $DIR/small_blocks_inline_threshold.rs:16:8: 16:23
             debug self => _5;            // in scope 8 at $SRC_DIR/core/src/str/mod.rs:LL:COL
-            let mut _20: &str;           // in scope 8 at $SRC_DIR/core/src/str/mod.rs:LL:COL
+            let mut _18: &str;           // in scope 8 at $SRC_DIR/core/src/str/mod.rs:LL:COL
         }
     }
     scope 2 (inlined <Args as Iterator>::collect::<Vec<String>>) { // at $DIR/small_blocks_inline_threshold.rs:15:37: 15:46
@@ -62,13 +60,10 @@ fn main() -> () {
         StorageLive(_16);                // scope 5 at $SRC_DIR/alloc/src/string.rs:LL:COL
         _16 = &((*_7).0: std::vec::Vec<u8>); // scope 5 at $SRC_DIR/alloc/src/string.rs:LL:COL
         _15 = _16;                       // scope 5 at $SRC_DIR/alloc/src/string.rs:LL:COL
-        StorageLive(_17);                // scope 7 at $SRC_DIR/alloc/src/vec/mod.rs:LL:COL
-        StorageLive(_18);                // scope 7 at $SRC_DIR/alloc/src/vec/mod.rs:LL:COL
-        _18 = _15;                       // scope 7 at $SRC_DIR/alloc/src/vec/mod.rs:LL:COL
-        _17 = Vec::<u8>::as_ptr(move _18) -> [return: bb10, unwind: bb4]; // scope 7 at $SRC_DIR/alloc/src/vec/mod.rs:LL:COL
+        _14 = <Vec<u8> as Deref>::deref(move _15) -> [return: bb9, unwind: bb4]; // scope 5 at $SRC_DIR/alloc/src/string.rs:LL:COL
                                          // mir::Constant
-                                         // + span: $SRC_DIR/alloc/src/vec/mod.rs:LL:COL
-                                         // + literal: Const { ty: for<'a> fn(&'a Vec<u8>) -> *const u8 {Vec::<u8>::as_ptr}, val: Value(<ZST>) }
+                                         // + span: $SRC_DIR/alloc/src/string.rs:LL:COL
+                                         // + literal: Const { ty: for<'a> fn(&'a Vec<u8>) -> &'a <Vec<u8> as Deref>::Target {<Vec<u8> as Deref>::deref}, val: Value(<ZST>) }
     }
 
     bb2: {
@@ -133,43 +128,34 @@ fn main() -> () {
     }
 
     bb9: {
+        _13 = _14;                       // scope 5 at $SRC_DIR/alloc/src/string.rs:LL:COL
+        StorageDead(_15);                // scope 5 at $SRC_DIR/alloc/src/string.rs:LL:COL
+        StorageLive(_17);                // scope 7 at $SRC_DIR/core/src/str/converts.rs:LL:COL
+        _17 = _13;                       // scope 7 at $SRC_DIR/core/src/str/converts.rs:LL:COL
+        _6 = transmute::<&[u8], &str>(move _17) -> [return: bb10, unwind: bb4]; // scope 7 at $SRC_DIR/core/src/str/converts.rs:LL:COL
+                                         // mir::Constant
+                                         // + span: $SRC_DIR/core/src/str/converts.rs:LL:COL
+                                         // + literal: Const { ty: unsafe extern "rust-intrinsic" fn(&[u8]) -> &str {transmute::<&[u8], &str>}, val: Value(<ZST>) }
+    }
+
+    bb10: {
+        StorageDead(_17);                // scope 7 at $SRC_DIR/core/src/str/converts.rs:LL:COL
         StorageDead(_13);                // scope 5 at $SRC_DIR/alloc/src/string.rs:LL:COL
         StorageDead(_16);                // scope 4 at $SRC_DIR/alloc/src/string.rs:LL:COL
         StorageDead(_14);                // scope 4 at $SRC_DIR/alloc/src/string.rs:LL:COL
         _5 = &(*_6);                     // scope 1 at $DIR/small_blocks_inline_threshold.rs:+2:3: +2:23
         StorageDead(_9);                 // scope 1 at $DIR/small_blocks_inline_threshold.rs:+2:6: +2:7
         StorageDead(_7);                 // scope 1 at $DIR/small_blocks_inline_threshold.rs:+2:6: +2:7
-        StorageLive(_20);                // scope 8 at $SRC_DIR/core/src/str/mod.rs:LL:COL
-        _20 = _5;                        // scope 8 at $SRC_DIR/core/src/str/mod.rs:LL:COL
-        _4 = <bool as FromStr>::from_str(move _20) -> [return: bb12, unwind: bb4]; // scope 8 at $SRC_DIR/core/src/str/mod.rs:LL:COL
+        StorageLive(_18);                // scope 8 at $SRC_DIR/core/src/str/mod.rs:LL:COL
+        _18 = _5;                        // scope 8 at $SRC_DIR/core/src/str/mod.rs:LL:COL
+        _4 = <bool as FromStr>::from_str(move _18) -> [return: bb11, unwind: bb4]; // scope 8 at $SRC_DIR/core/src/str/mod.rs:LL:COL
                                          // mir::Constant
                                          // + span: $SRC_DIR/core/src/str/mod.rs:LL:COL
                                          // + literal: Const { ty: for<'a> fn(&'a str) -> Result<bool, <bool as FromStr>::Err> {<bool as FromStr>::from_str}, val: Value(<ZST>) }
     }
 
-    bb10: {
-        StorageDead(_18);                // scope 7 at $SRC_DIR/alloc/src/vec/mod.rs:LL:COL
-        StorageLive(_19);                // scope 7 at $SRC_DIR/alloc/src/vec/mod.rs:LL:COL
-        _19 = ((*_15).1: usize);         // scope 7 at $SRC_DIR/alloc/src/vec/mod.rs:LL:COL
-        _14 = std::slice::from_raw_parts::<'_, u8>(move _17, move _19) -> [return: bb11, unwind: bb4]; // scope 7 at $SRC_DIR/alloc/src/vec/mod.rs:LL:COL
-                                         // mir::Constant
-                                         // + span: $SRC_DIR/alloc/src/vec/mod.rs:LL:COL
-                                         // + literal: Const { ty: unsafe fn(*const u8, usize) -> &[u8] {std::slice::from_raw_parts::<'_, u8>}, val: Value(<ZST>) }
-    }
-
     bb11: {
-        StorageDead(_19);                // scope 7 at $SRC_DIR/alloc/src/vec/mod.rs:LL:COL
-        StorageDead(_17);                // scope 7 at $SRC_DIR/alloc/src/vec/mod.rs:LL:COL
-        _13 = _14;                       // scope 5 at $SRC_DIR/alloc/src/string.rs:LL:COL
-        StorageDead(_15);                // scope 5 at $SRC_DIR/alloc/src/string.rs:LL:COL
-        _6 = from_utf8_unchecked(move _13) -> [return: bb9, unwind: bb4]; // scope 5 at $SRC_DIR/alloc/src/string.rs:LL:COL
-                                         // mir::Constant
-                                         // + span: $SRC_DIR/alloc/src/string.rs:LL:COL
-                                         // + literal: Const { ty: for<'a> unsafe fn(&'a [u8]) -> &'a str {from_utf8_unchecked}, val: Value(<ZST>) }
-    }
-
-    bb12: {
-        StorageDead(_20);                // scope 8 at $SRC_DIR/core/src/str/mod.rs:LL:COL
+        StorageDead(_18);                // scope 8 at $SRC_DIR/core/src/str/mod.rs:LL:COL
         StorageDead(_5);                 // scope 1 at $DIR/small_blocks_inline_threshold.rs:+2:22: +2:23
         _3 = Result::<bool, ParseBoolError>::unwrap(move _4) -> [return: bb2, unwind: bb4]; // scope 1 at $DIR/small_blocks_inline_threshold.rs:+2:3: +2:32
                                          // mir::Constant
